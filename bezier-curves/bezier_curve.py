@@ -13,6 +13,10 @@ def _get_interp_func(n_points):
         return None
 
 
+def _get_parameter_space(n_segments):
+    return np.linspace(0, 1, n_segments + 1)
+
+
 def linear_interpolation(p0, p1, dt):
     return (1 - dt) * p0 + dt * p1
 
@@ -43,10 +47,9 @@ def get_curve(n_segments, points):
     dimension = points.shape[1]
 
     interp_func = _get_interp_func(n_points)
+    t_space = _get_parameter_space(n_segments)
 
-    t_space = np.linspace(0, 1, n_segments + 1)
     curve = np.zeros((n_segments + 1, dimension), dtype=float)
-
     for i, dt in enumerate(t_space):
         curve[i] = interp_func(points, dt)
 
