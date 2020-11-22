@@ -10,11 +10,19 @@ def _get_interp_func(n_points):
         return cubic
     else:
         # TODO
-        return None
+        return general
 
 
 def _get_parameter_space(n_segments):
     return np.linspace(0, 1, n_segments + 1)
+
+
+def _binomial_coefficients(n, i):
+    return np.math.factorial(n) / np.math.factorial(i) / np.math.factorial(n - i)
+
+
+def _bernstein_polynomial(dt, n, i):
+    return _binomial_coefficients(n, i) * (1 - dt) ** (n - i) * dt ** i
 
 
 def linear_interpolation(p0, p1, dt):
@@ -40,6 +48,16 @@ def cubic(points, dt):
     p1 = quadratic(points[1:4], dt)
 
     return linear_interpolation(p0, p1, dt)
+
+
+def general(points, dt):
+    n = points.shape[0] - 1
+
+    point = np.zeros_like(points[0])
+    for i, p in enumerate(points):
+        point += _bernstein_polynomial(dt, n, i) * p
+
+    return point
 
 
 def get_curve(n_segments, points):
