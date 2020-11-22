@@ -1,6 +1,18 @@
 import numpy as np
 
 
+def _get_interp_func(n_points):
+    if n_points == 2:
+        return linear
+    elif n_points == 3:
+        return quadratic
+    elif n_points == 4:
+        return cubic
+    else:
+        # TODO
+        return None
+
+
 def linear_interpolation(p0, p1, dt):
     return (1 - dt) * p0 + dt * p1
 
@@ -24,18 +36,6 @@ def cubic(points, dt):
     p1 = quadratic(points[1:4], dt)
 
     return linear_interpolation(p0, p1, dt)
-
-
-def _get_interp_func(n_points):
-    if n_points == 2:
-        return linear
-    elif n_points == 3:
-        return quadratic
-    elif n_points == 4:
-        return cubic
-    else:
-        # TODO
-        return None
 
 
 def get_curve(n_segments, points):
