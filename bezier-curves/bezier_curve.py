@@ -25,29 +25,24 @@ def _bernstein_polynomial(dt, n, i):
     return _binomial_coefficients(n, i) * (1 - dt) ** (n - i) * dt ** i
 
 
-def linear_interpolation(p0, p1, dt):
+def linear(p0, p1, dt):
     return (1 - dt) * p0 + dt * p1
 
 
-def linear(points, dt):
-    p0 = points[0]
-    p1 = points[1]
-
-    return linear_interpolation(p0, p1, dt)
-
-
-def quadratic(points, dt):
-    p0 = linear(points[0:2], dt)
-    p1 = linear(points[1:3], dt)
-
-    return linear_interpolation(p0, p1, dt)
+def quadratic(p0, p1, p2, dt):
+    return linear(
+        linear(p0, p1, dt),
+        linear(p1, p2, dt),
+        dt
+    )
 
 
-def cubic(points, dt):
-    p0 = quadratic(points[0:3], dt)
-    p1 = quadratic(points[1:4], dt)
-
-    return linear_interpolation(p0, p1, dt)
+def cubic(p0, p1, p2, p3, dt):
+    return linear(
+        quadratic(p0, p1, p2, dt),
+        quadratic(p1, p2, p3, dt),
+        dt
+    )
 
 
 def general(points, dt):
@@ -69,6 +64,6 @@ def get_curve(n_segments, points):
 
     curve = np.zeros((n_segments + 1, dimension), dtype=float)
     for i, dt in enumerate(t_space):
-        curve[i] = interp_func(points, dt)
+        curve[i] = interp_func(*points, dt)
 
     return curve
