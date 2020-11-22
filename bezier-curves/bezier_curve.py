@@ -19,17 +19,30 @@ def quadratic(points, dt):
     return linear_interpolation(p0, p1, dt)
 
 
+def cubic(points, dt):
+    p0 = quadratic(points[0:3], dt)
+    p1 = quadratic(points[1:4], dt)
+
+    return linear_interpolation(p0, p1, dt)
+
+
+def _get_interp_func(n_points):
+    if n_points == 2:
+        return linear
+    elif n_points == 3:
+        return quadratic
+    elif n_points == 4:
+        return cubic
+    else:
+        # TODO
+        return None
+
+
 def get_curve(n_segments, points):
     n_points = points.shape[0]
     dimension = points.shape[1]
 
-    if n_points == 2:
-        interp_func = linear
-    elif n_points == 3:
-        interp_func = quadratic
-    else:
-        # TODO
-        interp_func = None
+    interp_func = _get_interp_func(n_points)
 
     t_space = np.linspace(0, 1, n_segments + 1)
     curve = np.zeros((n_segments + 1, dimension), dtype=float)
