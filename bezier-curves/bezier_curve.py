@@ -45,8 +45,8 @@ def cubic(p0, p1, p2, p3, dt):
     )
 
 
-def general(points, dt):
-    n = points.shape[0] - 1
+def general(*points, dt):
+    n = len(points) - 1
 
     point = np.zeros_like(points[0])
     for i, p in enumerate(points):
@@ -64,6 +64,6 @@ def get_curve(n_segments, points):
 
     curve = np.zeros((n_segments + 1, dimension), dtype=float)
     for i, dt in enumerate(t_space):
-        curve[i] = interp_func(*points, dt)
+        curve[i] = interp_func(*points, dt=dt)
 
     return curve
