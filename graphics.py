@@ -9,43 +9,40 @@ def clear_screen(screen):
     return np.zeros_like(screen)
 
 
-def bresenham(screen, x0, y1, x1, y2):
-    # https://inst.eecs.berkeley.edu/~cs150/fa10/Lab/CP3/LineDrawing.pdf
-    # TODO: make this return array of points instead of drawing itself.. maybe
+def bresenham(screen, x0, y0, x1, y1):
+    # https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+    # TODO: make this return array of points instead of drawing itself... maybe?
 
-    steep = np.abs(y2 - y1) > np.abs(x1 - x0)
-    if steep:
-        x0, y1 = y1, x0
-        x1, y2 = y2, x1
+    dx = np.abs(x1 - x0)
+    sx = 1 if x0 < x1 else -1
+    dy = -np.abs(y1 - y0)
+    sy = 1 if y0 < y1 else -1
+    err = dx + dy
 
-    if x0 > x1:
-        x0, x1 = x1, x0
-        y1, y2 = y2, y1
+    x = x0
+    y = y0
 
-    d_err = np.abs(y2 - y1)
-    y_step = -1 if y1 > y2 else 1
-    dx = x1 - x0
+    while True:
+        draw_point(screen, x, y)
 
-    err = dx >> 1
-    y = y1
+        if x == x1 and y == y1:
+            break
 
-    for x in range(x0, x1):
-        if steep:
-            draw_point(screen, y, x)
-        else:
-            draw_point(screen, x, y)
+        e2 = 2 * err
+        if e2 >= dy:
+            err += dy
+            x += sx
 
-        err -= d_err
-        if err < 0:
-            y += y_step
+        if e2 <= dx:
             err += dx
+            y += sy
 
 
 def draw_line(screen, p0, p1):
-    x0, y1 = p0
-    x1, y2 = p1
+    x0, y0 = p0
+    x1, y1 = p1
 
-    bresenham(screen, x0, y1, x1, y2)
+    bresenham(screen, x0, y0, x1, y1)
 
 
 def draw_points(screen, points, lines=False, connect=False, value=255):
@@ -55,13 +52,13 @@ def draw_points(screen, points, lines=False, connect=False, value=255):
         draw_point(screen, x, y, value=value)
 
         if lines and i < size - 1:
-            x1, y2 = points[i + 1]
-            draw_line(screen, (x, y), (x1, y2))
+            x1, y1 = points[i + 1]
+            draw_line(screen, (x, y), (x1, y1))
 
     if connect and lines:
-        x0, y1 = points[-1, 0], points[-1, 1]
-        x1, y2 = points[0, 0], points[0, 1]
-        draw_line(screen, (x0, y1), (x1, y2))
+        x0, y0 = points[-1, 0], points[-1, 1]
+        x1, y1 = points[0, 0], points[0, 1]
+        draw_line(screen, (x0, y0), (x1, y1))
 
 
 def draw_point(screen, x, y, value=255):
