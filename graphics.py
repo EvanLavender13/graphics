@@ -2,7 +2,7 @@ import numpy as np
 
 
 def create_screen(screen_size):
-    return np.zeros((screen_size[1], screen_size[0]), dtype=float)
+    return np.zeros((screen_size[1], screen_size[0]), dtype=np.uint8)
 
 
 def clear_screen(screen):
@@ -11,7 +11,7 @@ def clear_screen(screen):
 
 def bresenham(screen, x1, y1, x2, y2):
     # https://inst.eecs.berkeley.edu/~cs150/fa10/Lab/CP3/LineDrawing.pdf
-    # TODO: make this return array of points instead of drawing itself
+    # TODO: make this return array of points instead of drawing itself.. maybe
 
     steep = np.abs(y2 - y1) > np.abs(x2 - x1)
     if steep:
@@ -48,56 +48,37 @@ def draw_line(screen, p0, p1):
     bresenham(screen, x1, y1, x2, y2)
 
 
-def draw_points_p(screen, points, value=2):
+def draw_points_p(screen, points, value=255):
     for p in points:
         draw_point_p(screen, p, value=value)
 
 
-def draw_point_p(screen, p, value=2):
+def draw_point_p(screen, p, value=255):
     draw_point_xy(screen, p[0], p[1], value=value)
 
 
-def draw_points_xy(screen, points, value=1):
-    for x, y in points:
+def draw_points_xy(screen, points, lines=False, value=255):
+    size = len(points)
+    for i, (x, y) in enumerate(points):
         draw_point_xy(screen, x, y, value=value)
+        if lines and i < size - 1:
+            x2, y2 = points[i + 1]
+            draw_line(screen, (x, y), (x2, y2))
 
 
-def draw_point_xy(screen, x, y, value=1):
+def draw_point_xy(screen, x, y, value=255):
     row = screen.shape[0] - 1 - y
     col = x
 
     screen[row, col] = value
 
 
-def print_screen(screen):
-    # height, width = screen.shape
-
-    for y, row in enumerate(screen):
-        # TODO
-        line = "|"
-        for x, _ in enumerate(row):
-            value = screen[y, x]
-            # TODO
-            if value == 1:
-                pixel = " . "
-            elif value == 2:
-                pixel = " O "
-            else:
-                pixel = "   "
-
-            line += pixel
-
-        print(line + "|")
-
-
 if __name__ == "__main__":
-    screen = create_screen((25, 25))
+    screen = create_screen((250, 250))
 
     p0 = (0, 0)
-    p1 = (24, 24)
+    p1 = (249, 249)
 
     draw_line(screen, p0, p1)
     draw_point_p(screen, p0)
     draw_point_p(screen, p1)
-
-    print_screen(screen)
