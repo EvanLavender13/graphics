@@ -1,14 +1,16 @@
 import numpy as np
 
 
-cubic_coefs = np.array([
+_cubic_coefs = np.array([
     [1, 0, 0, 0],
     [-3, 3, 0, 0],
     [3, -6, 3, 0],
     [-1, 3, -3, 1]
 ])
 
-cubic_params = np.vectorize(lambda u: [1, u, u ** 2, u ** 3])
+
+def _cubic_params(u):
+    return np.array([1, u, u ** 2, u ** 3])
 
 
 def linear(p0, p1, u):
@@ -54,6 +56,6 @@ def cubic_bezier(control_points, n_samples):
     curve = np.zeros((n_samples, 2), dtype=int)
 
     for i, u in enumerate(u_space):
-        curve[i] = cubic_params(u) @ cubic_coefs @ control_points
+        curve[i] = _cubic_params(u) @ _cubic_coefs @ control_points
 
     return curve
